@@ -1,3 +1,5 @@
+<!--- SPDX-License-Identifier: Apache-2.0 -->
+
 ## How to export Pytorch model with custom op to ONNX and run it in ONNX Runtime
 
 This document describes the required steps for extending TorchScript with a custom operator, exporting the operator to ONNX format, and adding the operator to ONNX Runtime for model inference.
@@ -64,7 +66,7 @@ torch::Tensor custom_group_norm(torch::Tensor X, torch::Tensor num_groups, torch
 ```
 In this example, we use the [Eigen](https://eigen.tuxfamily.org/dox/index.html) library. To install this library, you need to download and extract Eigen header files. You can find this library [here](https://eigen.tuxfamily.org/dox/GettingStarted.html).
 <br />
-Next, you need to register this operator with TorchScript compiler using ```torch::RegisterOperator``` function in the same cpp file. The first argument is operator namespace and name separated by ```::```. The next argument is a reference to your function. 
+Next, you need to register this operator with TorchScript compiler using ```torch::RegisterOperator``` function in the same cpp file. The first argument is operator namespace and name separated by ```::```. The next argument is a reference to your function.
 
 ```cpp
 static auto registry = torch::RegisterOperators("mynamespace::custom_group_norm", &custom_group_norm);
@@ -87,10 +89,10 @@ setup(name='custom_group_norm',
 Make sure to include required header files in ```include_dirs``` list.
 
 Now, running the command ```python setup.py install``` from your source directory, you can build and install your extension.
-The shared object should be generated under ```build``` directory. 
+The shared object should be generated under ```build``` directory.
 You can load it using:
 ```torch.ops.load_library("<path_to_object_file>)```
-Then you can refer to your custom operator: 
+Then you can refer to your custom operator:
 ```torch.ops.<namespace_name>.<operator_name>```
 
 <a name="step2"></a>
@@ -117,7 +119,7 @@ In our example, we want to use an op from our custom opset. Therefore, we need t
 
 Now, You can create a ```torch.nn.module``` using your custom op, and export it to ONNX using ```torch.onnx.export```. Make sure to specify input and output names at export, as this will help you later when implementing the ONNX Runtime kernel for this operator.
 You can pass the custom opset versions in the custom_opsests dictionary when calling the export API. If not explicitly specified, custom opset version is set to 1 by default.
-```python 
+```python
 import torch
 
 def export_custom_op():
@@ -225,7 +227,7 @@ An example ```CMakeLists.txt``` file we could be found [here](https://github.com
 
 Once you have the cmake file, create a build directory from the same location and try ```cd build```. Execute the command ```cmake ..``` to configure the project and build it using ```make``` command.
 
-Now that you have registered your operator, you should be able to run your model and test it. You can find the source code and test for a sample custom operator [here](https://github.com/onnx/tutorials/tree/master/PyTorchCustomOperator/ort_custom_op/custom_op_test.cc). 
+Now that you have registered your operator, you should be able to run your model and test it. You can find the source code and test for a sample custom operator [here](https://github.com/onnx/tutorials/tree/master/PyTorchCustomOperator/ort_custom_op/custom_op_test.cc).
 
 
 
